@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.orion</groupId>
-	<artifactId>fox</artifactId>
+	<artifactId>rps</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rps</name>
 	<description>Demo project for Spring Boot</description>
