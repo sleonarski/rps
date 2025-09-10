@@ -1,8 +1,11 @@
 package com.orion.fox;
 
+import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 
+@Service
 class CLInputProvider implements InputProvider {
 
     private final BufferedReader reader;
