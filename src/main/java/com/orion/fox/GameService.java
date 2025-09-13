@@ -1,5 +1,7 @@
 package com.orion.fox;
 
+import java.util.Random;
+
 class GameService {
 
     private final InputProvider inputProvider;
@@ -9,43 +11,58 @@ class GameService {
     }
 
     public void play() {
-        boolean play = true;
+        boolean play;
+
+        //print app interface
+        printMenuScreen();
+        InputData userInput = inputProvider.getInput();
+        if (userInput.getData().equals("0")) {
+            play = false;
+            System.out.println("Goodbye!");
+        } else {
+            play = true;
+        }
 
         while (play) {
-            //print app interface
-            printMenuScreen();
             //get user input
-            InputData userInput = inputProvider.getInput();
+            System.out.println("Type:\n1 - Rock\n2 - Paper\n3 - Scissors\n0 - Back to menu");
+            userInput = inputProvider.getInput();
             //check if should continue
             if (userInput.getData().equals("0")) {
-                System.out.println("Goodbye!");
                 play = false;
-            } else if (userInput.getData().equals("1")) {
-                //process input
-                startGame(inputProvider);
+                play();
             } else {
-                System.out.println("Invalid input!\nType 1 for play or 0 for exit");
+                //process input
+                Weapon userWeapon = switch (userInput.getData()) {
+                    case "1" -> Weapon.ROCK;
+                    case "2" -> Weapon.PAPER;
+                    case "3" -> Weapon.SCISSORS;
+                    default -> null;
+                };
+
+                if (userWeapon != null) {
+                    printUserWeapon(userWeapon);
+                    Weapon enemyWeapon = getEnemyWeapon();
+                    printEnemyWeapon(enemyWeapon);
+                    int fightResult = fight(userWeapon, enemyWeapon);
+                    evaluateFight(fightResult);
+                } else {
+                    System.out.println("Wrong weapon number!");
+                }
             }
         }
     }
 
-    private void startGame(InputProvider inputProvider) {
-        System.out.println("Type:\n1 - Rock\n2 - Paper\n3 - Scissors");
-        InputData input = inputProvider.getInput();
-        Weapon userWeapon = switch (input.getData()) {
-            case "1" -> Weapon.ROCK;
-            case "2" -> Weapon.PAPER;
-            case "3" -> Weapon.SCISSORS;
-            default -> null;
-        };
+    private void printEnemyWeapon(Weapon enemyWeapon) {
+        printWeapon("Enemy", enemyWeapon);
+    }
 
-        if (userWeapon != null) {
-            Weapon enemyWeapon = getEnemyWeapon();
-            int fightResult = fight(userWeapon, enemyWeapon);
-            evaluateFight(fightResult);
-        } else {
-            System.out.println("Wrong weapon number!");
-        }
+    private void printUserWeapon(Weapon userWeapon) {
+        printWeapon("User", userWeapon);
+    }
+
+    private void printWeapon(String player, Weapon weapon) {
+        System.out.printf("%s used %s\n", player, weapon);
     }
 
     private void evaluateFight(int figntRersult) {
@@ -69,12 +86,17 @@ class GameService {
     }
 
     private Weapon getEnemyWeapon() {
-        //TODO make output random
-        return Weapon.ROCK;
+        Random random = new Random();
+        int enemyInput = random.nextInt(3);
+        return switch (enemyInput) {
+            case 0 -> Weapon.ROCK;
+            case 1 -> Weapon.PAPER;
+            case 2 -> Weapon.SCISSORS;
+            default -> throw new IllegalStateException("Unexpected value: " + enemyInput);
+        };
     }
 
     private void printMenuScreen() {
-        //TODO add logger
         System.out.println("Select action:\n1 - play game\n0 - exit");
     }
 }
